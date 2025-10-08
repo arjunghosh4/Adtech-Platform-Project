@@ -1,0 +1,101 @@
+campaign_id,advertiser,target_region,ad_format,start_date,end_date,budget,total_rev
+1,"Morris, Schaefer and Howard",EU,banner,2025-07-04,2025-09-08,17365,22327
+2,Young Inc,US,banner,2025-07-01,2025-09-22,7781,453
+3,Cox PLC,APAC,banner,2025-07-09,2025-09-13,15798,16825
+4,"Perez, Hudson and Martinez",US,banner,2025-07-08,2025-09-17,12087,9098
+5,Jacobs LLC,EU,video,2025-07-08,2025-08-31,19985,31062
+6,Hubbard Group,EU,banner,2025-07-05,2025-09-19,6984,5992
+7,"Webb, Sanchez and Molina",APAC,banner,2025-07-04,2025-08-15,16287,9353
+8,Phelps and Sons,US,banner,2025-07-03,2025-09-27,6052,2751
+9,"Gomez, Tucker and Duran",EU,banner,2025-07-14,2025-08-22,12658,5883
+10,Smith-Brown,US,banner,2025-07-02,2025-09-27,10254,4886
+11,Blackwell-Richards,US,banner,2025-07-01,2025-09-18,5350,7092
+12,"Hinton, Mcdonald and Gonzalez",APAC,banner,2025-07-03,2025-09-01,5912,6761
+13,Lee-Warren,APAC,video,2025-07-07,2025-09-25,9445,8848
+14,"Nguyen, Clark and Krause",EU,banner,2025-07-08,2025-09-05,14496,15639
+15,Williams-Davis,US,video,2025-07-01,2025-08-22,15715,27807
+16,Jones Group,APAC,banner,2025-07-07,2025-09-02,5291,3804
+17,Scott Group,US,banner,2025-07-14,2025-09-11,14404,11638
+18,Johnson Inc,US,banner,2025-07-08,2025-08-25,12750,9440
+19,Romero-Mendez,EU,banner,2025-07-15,2025-09-13,5467,798
+20,"King, Gibson and Valentine",US,banner,2025-07-09,2025-08-15,8277,4861
+21,Harrington LLC,APAC,banner,2025-07-01,2025-08-31,10361,4892
+22,"Barker, Roberts and Dyer",US,banner,2025-07-06,2025-09-16,19641,8818
+23,"Lee, Barr and Williams",US,video,2025-07-14,2025-08-26,10303,17205
+24,Harris-Porter,EU,banner,2025-07-11,2025-09-16,15717,25565
+25,"Malone, Singh and Smith",EU,carousel,2025-07-09,2025-08-21,8575,15061
+26,"Lindsey, Allen and Escobar",US,carousel,2025-07-05,2025-09-24,16391,15668
+27,"Phillips, Gallegos and Henderson",US,video,2025-07-07,2025-09-03,11592,20026
+28,Moon-Murphy,EU,banner,2025-07-11,2025-09-24,9325,1539
+29,Adams-Roberts,US,carousel,2025-07-04,2025-09-16,6064,5338
+30,"Carter, Oconnell and Lee",US,banner,2025-07-03,2025-09-22,9888,4667
+31,Morales-Alvarado,EU,banner,2025-07-13,2025-08-27,16655,11320
+32,Mullins-Hendricks,US,banner,2025-07-04,2025-08-24,18111,6340
+33,Mueller-Harris,APAC,carousel,2025-07-12,2025-09-07,14885,22322
+34,"Adkins, Sweeney and Green",EU,banner,2025-07-12,2025-08-25,18123,12606
+35,Flowers-Cohen,APAC,carousel,2025-07-09,2025-09-18,7394,9697
+36,Norman Inc,US,banner,2025-07-02,2025-09-17,15249,4408
+37,"Mercado, Williams and Steele",APAC,carousel,2025-07-15,2025-08-15,13278,14140
+38,Mcmahon Group,US,carousel,2025-07-04,2025-09-22,15784,9338
+39,Bray and Sons,US,carousel,2025-07-13,2025-09-04,17234,6141
+40,Richardson-Jones,US,banner,2025-07-03,2025-09-15,7920,5958
+41,"Gonzalez, Mitchell and Olson",US,carousel,2025-07-10,2025-08-16,18650,23775
+42,Burton LLC,US,carousel,2025-07-12,2025-08-22,11858,6181
+43,Baxter Group,EU,banner,2025-07-07,2025-09-07,5003,4591
+44,Brewer-Wallace,US,banner,2025-07-03,2025-09-03,16286,28058
+45,Jenkins-Tucker,US,video,2025-07-02,2025-08-30,18508,30287
+46,"Knight, Baker and Kelley",EU,banner,2025-07-08,2025-08-18,10940,6866
+47,Hurley LLC,US,video,2025-07-10,2025-08-30,13048,30077
+48,Patton-White,EU,banner,2025-07-03,2025-09-20,14713,11037
+49,Jones Group,EU,video,2025-07-08,2025-08-20,16140,27186
+50,"White, Copeland and Kane",APAC,banner,2025-07-04,2025-08-20,17049,8950
+51,"Fleming, Weber and Eaton",US,banner,2025-07-13,2025-09-15,19608,27427
+52,Hendricks-Johnson,APAC,banner,2025-07-09,2025-08-19,6977,6244
+53,Davis-Chase,EU,carousel,2025-07-15,2025-09-18,14666,18171
+54,Garner-Clements,APAC,banner,2025-07-12,2025-08-23,14322,9116
+55,Boyd PLC,US,carousel,2025-07-06,2025-08-23,14072,14017
+56,Nixon-Owen,EU,video,2025-07-12,2025-09-26,14593,27144
+57,Rios Inc,APAC,banner,2025-07-12,2025-09-14,15167,13666
+58,"Campbell, Medina and Smith",US,banner,2025-07-07,2025-09-19,18223,9302
+59,Young-Lee,EU,banner,2025-07-09,2025-08-25,19166,21275
+60,"Fox, Morgan and Williams",APAC,banner,2025-07-03,2025-08-31,6750,18371
+61,Pierce Inc,EU,banner,2025-07-06,2025-09-17,5001,7680
+62,Jenkins-Larsen,US,video,2025-07-08,2025-09-22,14336,7514
+63,Burke Inc,EU,carousel,2025-07-06,2025-09-11,14830,17236
+64,"Gross, Martinez and Meyer",US,banner,2025-07-15,2025-08-28,13340,6544
+65,"Delgado, Gonzales and Austin",APAC,video,2025-07-13,2025-09-18,9247,27882
+66,Wise PLC,US,carousel,2025-07-09,2025-09-28,12732,10343
+67,"Watson, Navarro and Cox",US,carousel,2025-07-08,2025-08-27,11035,10305
+68,"Lee, Williams and Cook",US,carousel,2025-07-11,2025-09-29,15545,15203
+69,Flores PLC,EU,carousel,2025-07-02,2025-09-03,7043,19839
+70,"Martin, Harris and Hill",APAC,banner,2025-07-08,2025-09-09,6702,10283
+71,Gomez LLC,US,carousel,2025-07-02,2025-09-26,10947,12108
+72,"Park, Alvarado and Reynolds",US,carousel,2025-07-11,2025-09-25,16121,20500
+73,Taylor PLC,US,banner,2025-07-13,2025-09-07,17762,13272
+74,Jones-Wheeler,APAC,banner,2025-07-09,2025-09-12,6387,3029
+75,Norton-Olsen,US,banner,2025-07-03,2025-09-17,18094,15915
+76,"Mejia, Hernandez and Tucker",US,banner,2025-07-07,2025-09-12,18382,19090
+77,"Cummings, Thomas and Smith",EU,banner,2025-07-11,2025-08-22,14855,8577
+78,"Bailey, Terry and Richard",US,video,2025-07-07,2025-08-30,15272,32053
+79,Hendrix Inc,US,video,2025-07-16,2025-08-29,18468,33298
+80,"Morales, Mckenzie and Durham",US,banner,2025-07-13,2025-08-19,18641,17236
+81,Cook and Sons,APAC,banner,2025-07-15,2025-09-05,10826,5448
+82,Rodriguez-Hernandez,APAC,video,2025-07-05,2025-08-16,15188,25245
+83,Miller-Steele,EU,banner,2025-07-09,2025-09-21,16884,15955
+84,"Jimenez, Medina and Miller",US,banner,2025-07-05,2025-09-19,16422,10104
+85,Stout Group,EU,video,2025-07-08,2025-08-29,18850,68526
+86,Brown-Williams,US,banner,2025-07-09,2025-09-21,14442,9739
+87,"Little, Mcdowell and Roach",EU,banner,2025-07-14,2025-08-29,9462,8324
+88,"Cuevas, Hoffman and Berg",EU,banner,2025-07-13,2025-08-15,19088,25015
+89,"Sanchez, George and Henderson",APAC,video,2025-07-12,2025-08-19,7036,13446
+90,"Davis, Beck and Jackson",US,video,2025-07-08,2025-09-29,11405,31073
+91,"Thomas, Lin and Gonzalez",EU,banner,2025-07-05,2025-09-24,11789,5287
+92,"Johnson, Henry and Fields",EU,banner,2025-07-16,2025-08-18,11119,19057
+93,Wilson-Hoffman,US,video,2025-07-03,2025-08-29,5537,8638
+94,"Walker, King and Doyle",EU,carousel,2025-07-02,2025-08-19,14746,16793
+95,"Rojas, Gardner and Wells",APAC,video,2025-07-04,2025-08-17,19351,42919
+96,"Oneill, Barber and Kim",APAC,carousel,2025-07-05,2025-09-05,15344,31505
+97,Gonzalez and Sons,EU,video,2025-07-06,2025-08-19,13982,40046
+98,"Wilson, Glover and Gibson",US,video,2025-07-14,2025-09-16,18514,25946
+99,Thomas-Lee,APAC,carousel,2025-07-03,2025-08-30,11863,10548
+100,Jackson-Parker,EU,video,2025-07-13,2025-09-01,6948,15146

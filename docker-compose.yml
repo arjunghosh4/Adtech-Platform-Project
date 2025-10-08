@@ -1,0 +1,106 @@
+version: '3.8'
+services:
+  # ---------------------
+  # Postgres + pgAdmin
+  # ---------------------
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ads_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+
+  # ---------------------
+  # dbt Core (inside Docker)
+  # ---------------------
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.7.0
+    platform: linux/amd64
+    container_name: dbt
+    depends_on:
+      - postgres
+    environment:
+      DBT_PROFILES_DIR: /root/.dbt
+    volumes:
+      - ./adtech_dbt:/usr/app        # mount your dbt project folder
+      - ~/.dbt:/root/.dbt            # mount your dbt profiles.yml
+    working_dir: /usr/app
+    command: ["tail", "-f", "/dev/null"]       # keep it running for interactive exec
+
+  # ---------------------
+  # Kafka + Zookeeper
+  # ---------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # ---------------------
+  # MinIO (S3 replacement)
+  # ---------------------
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # Web UI
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  # ---------------------
+  # MinIO Client (mc)
+  # ---------------------
+  minio-client:
+    image: minio/mc:latest
+    container_name: minio-client
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb local/bronze;
+      tail -f /dev/null
+      "
+
+volumes:
+  postgres_data:
+  minio_data:
