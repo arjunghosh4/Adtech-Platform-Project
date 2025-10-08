@@ -2,18 +2,18 @@
 streamlit==1.39.0
 
 # Data manipulation
-pandas==2.2.2
+pandas==2.2.3
 numpy==1.26.4
 
 # Database connection (Postgres/Neon)
-sqlalchemy==2.0.32
+sqlalchemy==2.0.35
 psycopg[binary,pool]==3.2.3
 
 # Visualization
-plotly==5.22.0
+plotly==5.24.0
 
 # Machine learning (for clustering or prediction phase)
-scikit-learn==1.5.1
+scikit-learn==1.5.2
 
 # Caching & misc utilities
 cachetools==5.3.3
