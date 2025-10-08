@@ -77,7 +77,7 @@ DB_NAME = os.getenv("PGDATABASE", "ads_db")
 DB_USER = os.getenv("PGUSER", "admin")
 DB_PASS = os.getenv("PGPASSWORD", "admin")
 
-DB_URL = "postgresql+psycopg2://neondb_owner:npg_6OS3wVMzaFjN@ep-weathered-bird-adpzpean-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
+DB_URL = "postgresql+psycopg://neondb_owner:npg_6OS3wVMzaFjN@ep-weathered-bird-adpzpean-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
 engine = create_engine(DB_URL, pool_pre_ping=True)
 
 # engine = create_engine(
