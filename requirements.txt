@@ -1,8 +1,23 @@
-streamlit
-pandas
-numpy
-plotly
-sqlalchemy
-psycopg2-binary
-scikit-learn
-joblib
+# Core framework
+streamlit==1.39.0
+
+# Data manipulation
+pandas==2.2.2
+numpy==1.26.4
+
+# Database connection (Postgres/Neon)
+sqlalchemy==2.0.32
+psycopg2-binary==2.9.9
+
+# Visualization
+plotly==5.22.0
+
+# Machine learning (for clustering or prediction phase)
+scikit-learn==1.5.1
+
+# Caching & misc utilities
+cachetools==5.3.3
+python-dateutil==2.9.0.post0
+
+# Optional: for production logs & colorized output
+rich==13.7.1
