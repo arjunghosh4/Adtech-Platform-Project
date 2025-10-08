@@ -7,7 +7,7 @@ numpy==1.26.4
 
 # Database connection (Postgres/Neon)
 sqlalchemy==2.0.32
-psycopg2-binary==2.9.9
+psycopg[binary,pool]==3.2.3
 
 # Visualization
 plotly==5.22.0
