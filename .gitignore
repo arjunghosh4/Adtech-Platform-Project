@@ -1,2 +1,3 @@
 adtech_dbt/*.sql
 *.sql
+data/
