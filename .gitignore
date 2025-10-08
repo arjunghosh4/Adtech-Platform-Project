@@ -1,3 +1,10 @@
-adtech_dbt/*.sql
+# Ignore large or private data
 *.sql
-data/
+*.csv
+*.db
+adtech_dbt/*.sql
+__pycache__/
+.dbt/
+.streamlit/
+venv/
+.env
