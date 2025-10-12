@@ -12,38 +12,122 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit.components.v1 as components
+import re
+from openai import OpenAI
 
 # ------------------ App + Theme ------------------
 st.set_page_config(page_title="Netflix × Amazon DSP – Executive Intelligence Hub",
                    layout="wide", initial_sidebar_state="expanded")
 
-# Netflix dark look & feel
+# Netflix dark look & feel + wider sidebar
 st.markdown("""
 <style>
+/* =============================
+   🎬 Netflix-Themed Global Look
+   ============================= */
 html, body, [class*="css"]  {
   background-color: #0E0E0E !important;
   color: #FFFFFF !important;
 }
-.sidebar .sidebar-content { background-color:#0E0E0E; }
-section.main > div { padding-top: 10px; }
 
-.card { background:#181818;border:1px solid #2A2A2A;border-radius:14px;padding:18px 20px;box-shadow:0 0 12px rgba(229,9,20,0.10); }
-.kpi { background:#181818;border:1px solid #2A2A2A;border-radius:14px;padding:16px 18px;box-shadow:0 0 8px rgba(229,9,20,0.08); }
-.kpi .title { color:#B3B3B3;font-size:12px;letter-spacing:.25px;text-transform:uppercase;font-weight:600; }
-.kpi .value { color:#FFFFFF;font-size:28px;font-weight:800;margin-top:2px; }
-.kpi .sub   { color:#B3B3B3;font-size:12px;margin-top:2px; }
+/* =============================
+   🧭 Sidebar Styling
+   ============================= */
+[data-testid="stSidebar"] {
+  background-color: #0E0E0E !important;
+  color: #FFFFFF !important;
+  width: 620px !important;           /* ⬅️ Increase width (default ~260px) */
+}
 
+[data-testid="stSidebarContent"] {
+  width: 420px !important;            /* Keep consistent with sidebar container */
+  padding: 12px 16px !important;
+}
+
+[data-testid="stSidebar"] .stMarkdown {
+  font-size: 0.95rem !important;
+  line-height: 1.45 !important;
+  color: #EDEDED !important;
+}
+
+/* =============================
+   🎨 Main Section Layout
+   ============================= */
+section.main > div {
+  padding-top: 10px;
+  margin-left: 10px;
+}
+
+/* =============================
+   📊 Card & KPI Styling
+   ============================= */
+.card {
+  background:#181818;
+  border:1px solid #2A2A2A;
+  border-radius:14px;
+  padding:18px 20px;
+  box-shadow:0 0 12px rgba(229,9,20,0.10);
+}
+
+.kpi {
+  background:#181818;
+  border:1px solid #2A2A2A;
+  border-radius:14px;
+  padding:16px 18px;
+  box-shadow:0 0 8px rgba(229,9,20,0.08);
+}
+
+.kpi .title {
+  color:#B3B3B3;
+  font-size:12px;
+  letter-spacing:.25px;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+.kpi .value {
+  color:#FFFFFF;
+  font-size:28px;
+  font-weight:800;
+  margin-top:2px;
+}
+
+.kpi .sub {
+  color:#B3B3B3;
+  font-size:12px;
+  margin-top:2px;
+}
+
+/* =============================
+   🧱 Typography
+   ============================= */
 .h1 { font-size:30px;font-weight:900;color:#fff; }
-.h2 { font-size:20px;font-weight:800;color:#fff; margin-bottom:2px;}
-.caption { color:#B3B3B3;font-size:13px;margin:4px 0 12px 0;}
+.h2 { font-size:20px;font-weight:800;color:#fff;margin-bottom:2px; }
+.caption { color:#B3B3B3;font-size:13px;margin:4px 0 12px 0; }
 .hr { border:none; border-top:1px solid #2A2A2A; margin:10px 0 16px 0; }
 
-.tag { display:inline-block; background:#251112; color:#FF4D57; border:1px solid #3A0D10;
-       padding:2px 8px;border-radius:999px;font-size:11px; font-weight:700; letter-spacing:.3px; }
+/* =============================
+   🏷️ Tags & Highlights
+   ============================= */
+.tag {
+  display:inline-block;
+  background:#251112;
+  color:#FF4D57;
+  border:1px solid #3A0D10;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.3px;
+}
+
 .red  { color:#E50914; }
 .green{ color:#1DB954; }
 .small{ font-size:12px;color:#B3B3B3; }
 
+/* =============================
+   💬 Info Boxes (like insights)
+   ============================= */
 .info-box {
   background-color: #181818;
   border: 1px solid #E50914;
@@ -66,24 +150,144 @@ section.main > div { padding-top: 10px; }
 
 table { color:#EDEDED; }
 
-</style>
+[data-testid="stSidebar"] h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: #E50914 !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
+/* Section dividers & padding */
+[data-testid="stSidebar"] .stRadio,
+[data-testid="stSidebar"] .stSelectbox,
+[data-testid="stSidebar"] .stMultiSelect,
+[data-testid="stSidebar"] .stTextInput {
+    margin-bottom: 0.8rem;
+}
+
+.topbar {
+  background-color: #0E0E0E;
+  border-bottom: 1px solid #2A2A2A;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.topbar-filters {
+  display: flex;
+  gap: 1rem;
+}
+.topbar select, .topbar [data-baseweb="select"] {
+  background-color: #181818 !important;
+  color: #FFFFFF !important;
+  border-radius: 8px !important;
+  border: 1px solid #2A2A2A !important;
+}
+
+/* =============================
+   💬 Decision Assistant Styling
+   ============================= */
+[data-testid="stSidebar"] h3 {
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  color: #E50914 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 0.8rem !important;
+}
+
+[data-testid="stSidebar"] .stMarkdown {
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  color: #EDEDED !important;
+}
+
+/* 💡 Sample Prompt Buttons */
+.stButton>button {
+  background: #181818 !important;
+  color: #EDEDED !important;
+  border: 1px solid #2A2A2A !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  width: 100% !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.stButton>button:hover {
+  background: #E50914 !important;
+  color: #FFFFFF !important;
+  border-color: #E50914 !important;
+  transform: scale(1.02);
+  box-shadow: 0 0 8px rgba(229, 9, 20, 0.3);
+}
+
+/* ✏️ Text Input Box (question field) */
+[data-testid="stTextInput"] input {
+  background-color: #1C1C1C !important;
+  color: #FFFFFF !important;
+  border: 1px solid #3A3A3A !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  padding: 10px 14px !important;
+  box-shadow: 0 0 6px rgba(229, 9, 20, 0.15);
+}
+
+[data-testid="stTextInput"] input:focus {
+  border-color: #E50914 !important;
+  box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
+  outline: none !important;
+}
+
+/* =============================
+   ✅ Sidebar Layout Safe Fix
+   ============================= */
+
+/* Restore normal flow but reduce right gap */
+section[data-testid="stSidebar"] > div:first-child,
+[data-testid="stSidebar"] .block-container {
+  padding-left: 18px !important;   /* readable margin */
+  padding-right: 6px !important;   /* remove large gap */
+  overflow-x: visible !important;  /* fix disappearing widgets */
+  width: auto !important;          /* prevent collapse */
+  max-width: none !important;
+}
+
+/* Keep inputs and buttons naturally sized */
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea,
+[data-testid="stSidebar"] button {
+  width: 100% !important;
+}
+
+/* Remove accidental white border / scrollbar */
+section[data-testid="stSidebar"] {
+  border-right: none !important;
+  overflow-x: hidden !important;
+}
+
+</style>
 """, unsafe_allow_html=True)
 
 # ------------------ DB Connection ------------------
-DB_HOST = os.getenv("PGHOST", "localhost")
-DB_PORT = os.getenv("PGPORT", "5433")
-DB_NAME = os.getenv("PGDATABASE", "ads_db")
-DB_USER = os.getenv("PGUSER", "admin")
-DB_PASS = os.getenv("PGPASSWORD", "admin")
+db_host = st.secrets.get("DB_HOST")
+db_port = st.secrets.get("DB_PORT") 
+db_name = st.secrets.get("DB_NAME") 
+db_user = st.secrets.get("DB_USER") 
+db_pass = st.secrets.get("DB_PASS") 
+db_sslmode = st.secrets.get("DB_SSLMODE", "require")
 
-DB_URL = "postgresql+psycopg://neondb_owner:npg_6OS3wVMzaFjN@ep-weathered-bird-adpzpean-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
+# Construct DB URL dynamically
+DB_URL = f"postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}?sslmode={db_sslmode}"
+
 engine = create_engine(DB_URL, pool_pre_ping=True)
-
-# engine = create_engine(
-#     f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
-#     pool_pre_ping=True
-# )
 
 @st.cache_data(ttl=300, show_spinner=False)
 def load_df(sql: str) -> pd.DataFrame:
@@ -138,49 +342,265 @@ segments = load_df("""
     from user_segments
 """)
 
+# ------------------ Topbar Filters ------------------
+col_region, col_fmt, col_adv, col_page = st.columns([1, 1, 1, 2])
+
+with col_region:
+    st.markdown("<div class='h1'> </div>", unsafe_allow_html=True)
+    reg_f = st.multiselect("Filter • Region", sorted(mrt["target_region"].dropna().unique().tolist()))
+
+with col_fmt:
+    st.markdown("<div class='h1'> </div>", unsafe_allow_html=True)
+    fmt_f = st.multiselect("Filter • Ad Format", sorted(mrt["ad_format"].dropna().unique().tolist()))
+
+with col_adv:
+    st.markdown("<div class='h1'> </div>", unsafe_allow_html=True)
+    adv_f = st.multiselect("Filter • Advertiser", sorted(mrt["advertiser"].dropna().unique().tolist()))
+
+with col_page:
+    st.markdown("<div class='h1'> </div>", unsafe_allow_html=True)
+    page = st.radio(
+        "Page",
+        ["1) Executive Summary", "2) Campaign Intelligence", "3) Predictive & Audience Insights"],
+        horizontal=True,
+        index=0
+    )
+
+    # Apply filters
+    mask = pd.Series(True, index=mrt.index)
+    if reg_f: mask &= mrt["target_region"].isin(reg_f)
+    if fmt_f: mask &= mrt["ad_format"].isin(fmt_f)
+    if adv_f: mask &= mrt["advertiser"].isin(adv_f)
+    mrt_f = mrt.loc[mask].copy()
+
+    # Numeric helpers
+    def ssum(s): return float(pd.to_numeric(s, errors="coerce").fillna(0).sum())
+    def smean(s):
+        x = pd.to_numeric(s, errors="coerce").replace([np.inf, -np.inf], np.nan).dropna()
+        return float(x.mean()) if len(x) else 0.0
+
+    # KPI calculations (keep same as before)
+    total_impr   = ssum(mrt_f["impressions_count"])
+    total_clicks = ssum(mrt_f["clicks_count"])
+    total_rev    = ssum(mrt_f["total_revenue"])
+    total_cost   = ssum(mrt_f["budget"])
+    avg_ctr      = smean(mrt_f["ctr"])
+    avg_cvr      = smean(mrt_f["cvr"])
+    avg_cpc      = smean(mrt_f["cpc"])
+    avg_cpm      = smean(mrt_f["cpm"])
+    avg_roi      = smean(mrt_f["roi_percentage"])
+    avg_roas     = smean(mrt_f["roas"])
+
 # ------------------ Sidebar Filters ------------------
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-                 use_column_width=True)
-st.sidebar.markdown("<span class='tag'>Executive Intelligence Hub</span>", unsafe_allow_html=True)
-st.sidebar.write("")
+with st.sidebar:
+    # ------------------------------
+    # 🔧 OpenAI Client Setup
+    # ------------------------------
+    api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        st.error("⚠️ Missing OpenAI API key. Please set OPENAI_API_KEY in Streamlit secrets.")
+    else:
+        client = OpenAI(api_key=api_key)
 
-reg_f  = st.sidebar.multiselect("Filter • Region", sorted(mrt["target_region"].dropna().unique().tolist()))
-fmt_f  = st.sidebar.multiselect("Filter • Ad Format", sorted(mrt["ad_format"].dropna().unique().tolist()))
-adv_f  = st.sidebar.multiselect("Filter • Advertiser", sorted(mrt["advertiser"].dropna().unique().tolist()))
+    # ------------------------------
+    # 🤖 Helper: Unified LLM Caller
+    # ------------------------------
+    def call_llm(prompt: str, model: str = "gpt-4o-mini", system_role: str = "You are a senior data analyst.") -> str:
+        """Wrapper for OpenAI API with clean response and error handling."""
+        try:
+            resp = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_role},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0,
+            )
+            return resp.choices[0].message.content.strip()
+        except Exception as e:
+            return f"⚠️ LLM Error: {e}"
 
-mask = pd.Series(True, index=mrt.index)
-if reg_f: mask &= mrt["target_region"].isin(reg_f)
-if fmt_f: mask &= mrt["ad_format"].isin(fmt_f)
-if adv_f: mask &= mrt["advertiser"].isin(adv_f)
-mrt_f = mrt.loc[mask].copy()
+    # ------------------------------
+    # 📊 Database Schema Extraction
+    # ------------------------------
+    @st.cache_data(ttl=3600)
+    def get_db_schema_full():
+        """Retrieve all tables and columns from the connected PostgreSQL database."""
+        schema_info = {}
+        with engine.connect() as conn:
+            tables = conn.execute(text("""
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema NOT IN ('pg_catalog', 'information_schema');
+            """)).fetchall()
 
-# Numeric helpers (robust to NaN/inf)
-def ssum(s): return float(pd.to_numeric(s, errors="coerce").fillna(0).sum())
-def smean(s):
-    x = pd.to_numeric(s, errors="coerce").replace([np.inf,-np.inf], np.nan).dropna()
-    return float(x.mean()) if len(x) else 0.0
+            for (tname,) in tables:
+                cols = conn.execute(text(f"""
+                    SELECT column_name, data_type
+                    FROM information_schema.columns
+                    WHERE table_name='{tname}'
+                    ORDER BY ordinal_position;
+                """)).fetchall()
+                schema_info[tname] = [f"{c} ({t})" for c, t in cols]
+        return schema_info
 
-# KPI calculations
-total_impr   = ssum(mrt_f["impressions_count"])
-total_clicks = ssum(mrt_f["clicks_count"])
-total_rev    = ssum(mrt_f["total_revenue"])
-total_cost   = ssum(mrt_f["budget"])
-avg_ctr      = smean(mrt_f["ctr"])
-avg_cvr      = smean(mrt_f["cvr"])
-avg_cpc      = smean(mrt_f["cpc"])
-avg_cpm      = smean(mrt_f["cpm"])
-avg_roi      = smean(mrt_f["roi_percentage"])
-avg_roas     = smean(mrt_f["roas"])
+    # ------------------------------
+    # 🧩 Helper: Extract SQL from LLM
+    # ------------------------------
+    def extract_sql_block(text_block):
+        """Extract SQL query from LLM output."""
+        match = re.search(r"```sql\s*(.*?)```", text_block, re.DOTALL | re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+        match = re.search(r"(SELECT\s+.*)", text_block, re.DOTALL | re.IGNORECASE)
+        if match:
+            return match.group(1).split(";")[0] + ";"
+        return None
+    
+    # ------------------------------
+    # ⚡ Decision Assistant — Safe 5-Prompt Version
+    # ------------------------------
+    
+    if "ai_response" not in st.session_state:
+        st.session_state.ai_response = None
+    if "ai_df" not in st.session_state:
+        st.session_state.ai_df = None
+    
+    st.sidebar.image(
+        "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+        width=320
+    )
+    st.sidebar.markdown("<span class='tag'>Executive Intelligence Hub</span>", unsafe_allow_html=True)
+    st.sidebar.markdown("### Ask the Decision Intelligence Assistant")
+    st.sidebar.caption("Ask about ROI, CTR, revenue trends, or audience clusters.")
+    
+    # --- Sample Quick Prompts ---
+    sample_prompts = [
+        "Show top 5 campaigns by ROI (Return on Investment)",
+        "List user clusters with highest average revenue per user.",
+        "Summarize revenue and spend trends"
+    ]
 
-# ------------------ Page Switcher ------------------
-page = st.sidebar.radio(
-    "Pages",
-    ["1) Executive Summary",
-     "2) Campaign Intelligence",
-     "3) Predictive & Audience Insights"],
-    index=0
-)
+    st.sidebar.markdown("#### Try a Sample Question:")
+    for i, q in enumerate(sample_prompts, start=1):
+        if st.sidebar.button(f"{q}", key=f"sample_{i}"):
+            st.session_state.selected_prompt = q
 
+    # If user clicked a sample, pre-fill it into textbox
+    prefill = st.session_state.get("selected_prompt", "")
+
+    # Session state init
+    if "query_count" not in st.session_state:
+        st.session_state.query_count = 0
+    if "last_prompt" not in st.session_state:
+        st.session_state.last_prompt = None
+
+    # Check if limit reached
+    limit_reached = st.session_state.query_count >= 5
+
+    # Input box disabled after limit
+    user_q = st.sidebar.text_input(
+        "Your question:",
+        value=prefill,
+        placeholder="e.g., Top 5 campaigns by ROI this month",
+        disabled=limit_reached,
+    )
+
+    # Show remaining prompts or message
+    if limit_reached:
+        st.sidebar.warning("⚠️ You’ve reached the 5-prompt limit for this session.")
+        st.sidebar.caption("The assistant is temporarily locked — dashboards remain available.")
+    else:
+        remaining = 5 - st.session_state.query_count
+        st.sidebar.caption(f"{remaining} prompts left this session.")
+
+    # ---- Handle new question only ----
+    if user_q and user_q.strip() and user_q != st.session_state.last_prompt and not limit_reached:
+        st.session_state.query_count += 1
+        st.session_state.last_prompt = user_q
+
+        try:
+            # Step 1: Schema
+            schema_dict = get_db_schema_full()
+            schema_text = "\n".join(
+                [f"Table {t} has columns: {', '.join(cols)}." for t, cols in schema_dict.items()]
+            )
+
+            # Step 2: Generate SQL
+            sql_prompt = f"""
+            You are a PostgreSQL expert and data analyst.
+            The database schema is shown below.
+
+            {schema_text}
+
+            Your task:
+            - Translate the user's question into a syntactically valid PostgreSQL query.
+            - Use only existing tables/columns.
+            - Return ONLY the SQL inside ```sql``` fences (no explanation).
+            - When comparing performance or loss, prefer 'total_revenue' vs 'budget'.
+            """
+            sql_output = call_llm(
+                f"{sql_prompt}\n\nUser question: {user_q}",
+                system_role="You are a SQL generator for PostgreSQL."
+            )
+            extracted_sql = extract_sql_block(sql_output)
+
+            if extracted_sql:
+                st.sidebar.markdown("#### Generated Query")
+                st.sidebar.markdown(f"```sql\n{extracted_sql}\n```")
+
+                with engine.connect() as conn:
+                    df = pd.read_sql(text(extracted_sql), conn)
+
+                if not df.empty:
+                    sample = df.head(10).to_markdown(index=False)
+                    summary_prompt = f"""
+                    You are a data analyst for Netflix's Ad Intelligence team.
+                    Schema: {schema_text}
+
+                    The user asked: "{user_q}"
+                    The SQL query executed successfully and returned the following sample rows:
+
+                    {sample}
+
+                    Summarize these results for executives:
+                    - One concise paragraph + up to 3 bullet points.
+                    - Highlight ROI, revenue, CTR, or campaign outcomes.
+                    - Avoid technical SQL terms.
+                    """
+                    insight_text = call_llm(summary_prompt)
+                    st.session_state.ai_response = insight_text
+                    st.session_state.ai_df = df
+                    #st.sidebar.markdown("#### 💡 Executive Insight")
+                    #st.sidebar.markdown(insight_text)
+                    # --- Optional: show result preview inside sidebar ---
+                    # with st.sidebar.expander("🔍 View Query Results (Top 10)"):
+                    #     st.dataframe(df.head(10), use_container_width=True)
+                else:
+                    st.sidebar.info("No relevant data found for your query.")
+                    st.session_state.ai_response = "No relevant data found for your query."
+                    st.session_state.ai_df = None
+            else:
+                st.sidebar.warning("⚠️ Could not extract a valid SQL query.")
+                st.session_state.ai_response = "⚠️ Could not generate a valid SQL query."
+                st.session_state.ai_df = None
+
+        except Exception as e:
+            st.sidebar.error(f"⚠️ Error: {e}")
+            st.session_state.ai_response = f"⚠️ Error: {e}"
+            st.session_state.ai_df = None
+  
+# ------------------------------
+# 💾 Show last response persistently
+# ------------------------------
+if st.session_state.ai_response:
+    st.sidebar.markdown("#### 💡 Executive Insight")
+    st.sidebar.markdown(st.session_state.ai_response)
+
+if st.session_state.ai_df is not None and not st.session_state.ai_df.empty:
+    with st.sidebar.expander("🔍 View Query Results (Top 10)"):
+        st.dataframe(st.session_state.ai_df.head(10), use_container_width=True)
+              
 # ======================================================
 # 1) EXECUTIVE SUMMARY
 # ======================================================
